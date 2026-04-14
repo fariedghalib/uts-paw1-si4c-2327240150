@@ -9,8 +9,104 @@
 </head>
 <body>
     <div class="container-fluid">
-        <!-- container / container-fluid -->
-
-        <h1 class="text-center text-uppercase">Catatan Belanja</h1>
-        <!-- navs -->
+        <h1 class="text-center text-uppercase p-3">Catatan Belanja</h1>
         
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h3 class="bg-primary text-white p-3 rounded">Form Input</h3>
+                    <div class="mb-3">
+                        <label for="namabarang" class="form-label">Nama Barang</label>
+                        <input type="text" id="namabarang" class="form-control border-primary">
+                    </div>
+                    <div class="mb-3">
+                        <label for="jumlah" class="form-label">Jumlah</label>
+                        <input type="text" id="jumlah" class="form-control border-primary">
+                    </div>
+                    <div class="mb-3">
+                        <label for="keterangan" class="form-label">Keterangan</label>
+                        <input type="text" id="keterangan" class="form-control border-primary">
+                    </div>
+                    <button onclick="simpan()" class="btn btn-success">Simpan</button>
+                </div>
+            </div>
+
+            <h3 class="bg-success text-white p-3 rounded mt-4">Daftar Belanja</h3>
+            <div class="row" id="list-mhs"></div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    
+    <!-- Script localStorage -->
+    <script>
+        let namaBarang = document.getElementById("namabarang");
+        let jumlah = document.getElementById("jumlah");
+        let keterangan = document.getElementById("keterangan");
+
+        function simpan() {
+            console.log(namaBarang.value);
+            console.log(jumlah.value);
+            console.log(keterangan.value);
+
+            // Validasi input tidak kosong
+            if (!namaBarang.value || !jumlah.value || !keterangan.value) {
+                alert("Semua field harus diisi!");
+                return;
+            }
+
+            // Cek localStorage sudah ada isi atau belum
+            if (localStorage.getItem("barang") === null) {
+                localStorage.setItem("barang", "[]");
+            }
+
+            // Panggil localStorage (konversi string => object)
+            let data = JSON.parse(localStorage.getItem("barang"));
+            console.log(data);
+
+            // Simpan value ke dalam object data
+            data.push({
+                namaBarang: namaBarang.value,
+                jumlah: jumlah.value,
+                keterangan: keterangan.value
+            });
+
+            // Simpan data terbaru ke dalam localStorage
+            localStorage.setItem("barang", JSON.stringify(data));
+
+            // Bersihkan input form
+            namaBarang.value = "";
+            jumlah.value = "";
+            keterangan.value = "";
+
+            // Panggil tampil()
+            tampil();
+        }
+
+        function tampil() {
+            let hasil = JSON.parse(localStorage.getItem("barang"));
+
+            // Clear element
+            document.getElementById("list-mhs").innerHTML = "";
+            
+            // Lakukan perulangan
+            hasil.forEach(element => {
+                document.getElementById("list-mhs").innerHTML += 
+                `<div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">${element.namaBarang}</h5>
+                            <h6 class="card-subtitle text-success">Jumlah: ${element.jumlah}</h6>
+                            <p class="card-text">${element.keterangan}</p>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // Jalankan fungsi tampil()
+        tampil();
+    </script>
+</body>
+</html>
